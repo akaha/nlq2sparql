@@ -1,0 +1,790 @@
+[
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out)s>",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT ?uri WHERE {?uri <%(e_to_e_out)s> <%(e_out)s> } ",
+    "placeholders": "<%(e_out)s>",
+    "type": "vanilla",
+    "id": 1
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out)s>",
+        "subject": "?uri"
+      },
+      {
+        "predicate": "rdf:type",
+        "object": "class",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT ?uri WHERE {?uri <%(e_to_e_out)s> <%(e_out)s> . ?uri rdf:type class } ",
+    "placeholders": "<%(e_out)s>",
+    "type": "vanilla",
+    "id": 301
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "<%(e_in)s>"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in)s> <%(e_in_to_e)s> ?uri } ",
+    "placeholders": "<%(e_in)s>",
+    "type": "vanilla",
+    "id": 2
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "<%(e_in)s>"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in)s> <%(e_in_to_e)s> ?uri } . ?uri rdf:type class ",
+    "placeholders": "<%(e_in)s>",
+    "type": "vanilla",
+    "id": 302
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_in_to_e_in)s>",
+        "object": "?x",
+        "subject": "<%(e_in_in)s>"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      },
+      {
+        "predicate": "rdf:type",
+        "object": "class",
+        "subject": "?x"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in_in)s> <%(e_in_in_to_e_in)s> ?x . ?x <%(e_in_to_e)s> ?uri . ?x rdf:type class} ",
+    "placeholders": "<%(e_in_in)s>",
+    "type": "vanilla",
+    "id": 3
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_in_to_e_in)s>",
+        "object": "?x",
+        "subject": "<%(e_in_in)s>"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in_in)s> <%(e_in_in_to_e_in)s> ?x . ?x <%(e_in_to_e)s> ?uri } ",
+    "placeholders": "<%(e_in_in)s>",
+    "type": "vanilla",
+    "id": 303
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e_in_out)s>",
+        "object": "<%(e_in_out)s>",
+        "subject": "?x"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT ?uri WHERE { ?x <%(e_in_to_e_in_out)s> <%(e_in_out)s> . ?x <%(e_in_to_e)s> ?uri } ",
+    "placeholders": "<%(e_in_out)s>",
+    "type": "vanilla",
+    "id": 5
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e_in_out)s>",
+        "object": "<%(e_in_out)s>",
+        "subject": "?x"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      },
+      {
+        "predicate": "rdf:type",
+        "object": "class",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT ?uri WHERE { ?x <%(e_in_to_e_in_out)s> <%(e_in_out)s> . ?x <%(e_in_to_e)s> ?uri . ?uri rdf:type class} ",
+    "placeholders": "<%(e_in_out)s>",
+    "type": "vanilla",
+    "id": 305
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_out_to_e_out_out)s>",
+        "object": "<%(e_out_out)s>",
+        "subject": "?x"
+      },
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "?x",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 1,
+    "template": "SELECT DISTINCT ?uri WHERE { ?x <%(e_out_to_e_out_out)s> <%(e_out_out)s> . ?uri <%(e_to_e_out)s> ?x } ",
+    "placeholders": "<%(e_out_out)s>",
+    "type": "vanilla",
+    "id": 6
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_out_to_e_out_out)s>",
+        "object": "<%(e_out_out)s>",
+        "subject": "?x"
+      },
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "?x",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 1,
+    "template": "SELECT DISTINCT ?uri WHERE { ?x <%(e_out_to_e_out_out)s> <%(e_out_out)s> . ?uri <%(e_to_e_out)s> ?x } . ?uri rdf:type class",
+    "placeholders": "<%(e_out_out)s>",
+    "type": "vanilla",
+    "id": 306
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out_1)s>",
+        "subject": "?uri"
+      },
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out_2)s>",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 2,
+    "template": " SELECT DISTINCT ?uri WHERE { ?uri <%(e_to_e_out)s> <%(e_out_1)s> . ?uri <%(e_to_e_out)s> <%(e_out_2)s>} ",
+    "placeholders": ["<%(e_out_1)s>", "<%(e_out_2)s>"],
+    "type": "vanilla",
+    "id": 7
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out_1)s>",
+        "subject": "?uri"
+      },
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out_2)s>",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 2,
+    "template": " SELECT DISTINCT ?uri WHERE { ?uri <%(e_to_e_out)s> <%(e_out_1)s> . ?uri <%(e_to_e_out)s> <%(e_out_2)s>} ",
+    "placeholders": ["<%(e_out_1)s>", "<%(e_out_2)s>"],
+    "type": "vanilla",
+    "id": 307
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out_1)s>",
+        "object": "<%(e_out_1)s>",
+        "subject": "?uri"
+      },
+      {
+        "predicate": "<%(e_to_e_out_2)s>",
+        "object": "<%(e_out_2)s>",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 2,
+    "template": " SELECT DISTINCT ?uri WHERE {?uri <%(e_to_e_out_1)s> <%(e_out_1)s> . ?uri <%(e_to_e_out_2)s> <%(e_out_2)s> } ",
+    "placeholders": ["<%(e_out_1)s>", "<%(e_out_2)s>"],
+    "type": "vanilla",
+    "id": 8
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out_1)s>",
+        "object": "<%(e_out_1)s>",
+        "subject": "?uri"
+      },
+      {
+        "predicate": "<%(e_to_e_out_2)s>",
+        "object": "<%(e_out_2)s>",
+        "subject": "?uri"
+      },
+      {
+        "predicate": "rdf:type",
+        "object": "class",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 2,
+    "template": " SELECT DISTINCT ?uri WHERE {?uri <%(e_to_e_out_1)s> <%(e_out_1)s> . ?uri <%(e_to_e_out_2)s> <%(e_out_2)s> . ?uri rdf:type class} ",
+    "placeholders": ["<%(e_out_1)s>", "<%(e_out_2)s>"],
+    "type": "vanilla",
+    "id": 308
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_in_to_e_in)s>",
+        "object": "?x",
+        "subject": "<%(e_in_in)s>"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in_in)s>  <%(e_in_in_to_e_in)s> ?x .  ?x <%(e_in_to_e)s> ?uri}",
+    "placeholders": "<%(e_in_in)s>",
+    "type": "vanilla",
+    "id": 9
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_in_to_e_in)s>",
+        "object": "?x",
+        "subject": "<%(e_in_in)s>"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      },
+      {
+        "predicate": "?x",
+        "object": "rdf:type",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in_in)s>  <%(e_in_in_to_e_in)s> ?x .  ?x <%(e_in_to_e)s> ?uri. ?x rdf:type class}",
+    "placeholders": "<%(e_in_in)s>",
+    "type": "vanilla",
+    "id": 309
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e_in_out)s>",
+        "object": "<%(e_in_out)s>",
+        "subject": "?x"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      },
+      {
+        "predicate": "rdf:type",
+        "object": "class",
+        "subject": "?x"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT ?uri WHERE { ?x <%(e_in_to_e_in_out)s> <%(e_in_out)s> . ?x <%(e_in_to_e)s> ?uri .?x rdf:type class}",
+    "placeholders": "<%(e_in_out)s>",
+    "type": "vanilla",
+    "id": 311
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e_in_out)s>",
+        "object": "<%(e_in_out)s>",
+        "subject": "?x"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT ?uri WHERE { ?x <%(e_in_to_e_in_out)s> <%(e_in_out)s> . ?x <%(e_in_to_e)s> ?uri }",
+    "placeholders": "<%(e_in_out)s>",
+    "type": "vanilla",
+    "id": 61
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "<%(e_in_1)s>"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "<%(e_in_2)s>"
+      }
+    ],
+    "n_entities": 2,
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in_1)s> <%(e_in_to_e)s> ?uri. <%(e_in_2)s> <%(e_in_to_e)s> ?uri} ",
+    "placeholders": ["<%(e_in_1)s>", "<%(e_in_2)s>"],
+    "type": "vanilla",
+    "id": 15
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "<%(e_in_1)s>"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "<%(e_in_2)s>"
+      }
+    ],
+    "n_entities": 2,
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in_1)s> <%(e_in_to_e)s> ?uri. <%(e_in_2)s> <%(e_in_to_e)s> ?uri} . ?uri rdf:type class",
+    "placeholders": ["<%(e_in_1)s>", "<%(e_in_2)s>"],
+    "type": "vanilla",
+    "id": 315
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e_1)s>",
+        "object": "?uri",
+        "subject": "<%(e_in_1)s>"
+      },
+      {
+        "predicate": "<%(e_in_to_e_2)s>",
+        "object": "?uri",
+        "subject": "<%(e_in_2)s>"
+      }
+    ],
+    "n_entities": 2,
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in_1)s> <%(e_in_to_e_1)s> ?uri. <%(e_in_2)s> <%(e_in_to_e_2)s> ?uri} ",
+    "placeholders": ["<%(e_in_1)s>", "<%(e_in_2)s>"],
+    "type": "vanilla",
+    "id": 16
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e_1)s>",
+        "object": "?uri",
+        "subject": "<%(e_in_1)s>"
+      },
+      {
+        "predicate": "<%(e_in_to_e_2)s>",
+        "object": "?uri",
+        "subject": "<%(e_in_2)s>"
+      }
+    ],
+    "n_entities": 2,
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in_1)s> <%(e_in_to_e_1)s> ?uri. <%(e_in_2)s> <%(e_in_to_e_2)s> ?uri} . ?uri rdf:type class",
+    "placeholders": ["<%(e_in_1)s>", "<%(e_in_2)s>"],
+    "type": "vanilla",
+    "id": 316
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out)s>",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE {?uri <%(e_to_e_out)s> <%(e_out)s> } ",
+    "placeholders": "<%(e_out)s>",
+    "type": "count",
+    "id": 101
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out)s>",
+        "subject": "?uri"
+      },
+      {
+        "predicate": "rdf:type",
+        "object": "class",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE {?uri <%(e_to_e_out)s> <%(e_out)s> . ?uri rdf:type class} ",
+    "placeholders": "<%(e_out)s>",
+    "type": "count",
+    "id": 401
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "<%(e_in)s>"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { <%(e_in)s> <%(e_in_to_e)s> ?uri } ",
+    "placeholders": "<%(e_in)s>",
+    "type": "count",
+    "id": 102
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "<%(e_in)s>"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { <%(e_in)s> <%(e_in_to_e)s> ?uri } . ?uri rdf:type class",
+    "placeholders": "<%(e_in)s>",
+    "type": "count",
+    "id": 402
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_in_to_e_in)s>",
+        "object": "?x",
+        "subject": "<%(e_in_in)s>"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { <%(e_in_in)s> <%(e_in_in_to_e_in)s> ?x . ?x <%(e_in_to_e)s> ?uri } ",
+    "placeholders": "<%(e_in_in)s>",
+    "type": "count",
+    "id": 103
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_in_to_e_in)s>",
+        "object": "?x",
+        "subject": "<%(e_in_in)s>"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { <%(e_in_in)s> <%(e_in_in_to_e_in)s> ?x . ?x <%(e_in_to_e)s> ?uri } ",
+    "placeholders": "<%(e_in_in)s>",
+    "type": "count",
+    "id": 403
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e_in_out)s>",
+        "object": "<%(e_in_out)s>",
+        "subject": "?x"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      },
+      {
+        "predicate": "rdf:type",
+        "object": "class",
+        "subject": "?x"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { ?x <%(e_in_to_e_in_out)s> <%(e_in_out)s> . ?x <%(e_in_to_e)s> ?uri. ?x rdf:type class}",
+    "placeholders": "<%(e_in_out)s>",
+    "type": "count",
+    "id": 105
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e_in_out)s>",
+        "object": "<%(e_in_out)s>",
+        "subject": "?x"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { ?x <%(e_in_to_e_in_out)s> <%(e_in_out)s> . ?x <%(e_in_to_e)s> ?uri } . ?uri rdf:type class",
+    "placeholders": "<%(e_in_out)s>",
+    "type": "count",
+    "id": 405
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_out_to_e_out_out)s>",
+        "object": "<%(e_out_out)s>",
+        "subject": "?x"
+      },
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "?x",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 1,
+    "template": "SELECT DISTINCT COUNT(?uri) WHERE { ?x <%(e_out_to_e_out_out)s> <%(e_out_out)s> . ?uri <%(e_to_e_out)s> ?x } ",
+    "placeholders": "<%(e_out_out)s>",
+    "type": "count",
+    "id": 106
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_out_to_e_out_out)s>",
+        "object": "<%(e_out_out)s>",
+        "subject": "?x"
+      },
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "?x",
+        "subject": "?uri"
+      },
+      {
+        "predicate": "rdf:type",
+        "object": "class",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 1,
+    "template": "SELECT DISTINCT COUNT(?uri) WHERE { ?x <%(e_out_to_e_out_out)s> <%(e_out_out)s> . ?uri <%(e_to_e_out)s> ?x . ?uri rdf:type class} ",
+    "placeholders": "<%(e_out_out)s>",
+    "type": "count",
+    "id": 406
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out_1)s>",
+        "subject": "?uri"
+      },
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out_2)s>",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 2,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { ?uri <%(e_to_e_out)s> <%(e_out_1)s> . ?uri <%(e_to_e_out)s> <%(e_out_2)s>} ",
+    "placeholders": ["<%(e_out_1)s>", "<%(e_out_2)s>"],
+    "type": "count",
+    "id": 107
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out_1)s>",
+        "subject": "?uri"
+      },
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out_2)s>",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 2,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { ?uri <%(e_to_e_out)s> <%(e_out_1)s> . ?uri <%(e_to_e_out)s> <%(e_out_2)s>} . ?uri rdf:type class ",
+    "placeholders": ["<%(e_out_1)s>", "<%(e_out_2)s>"],
+    "type": "count",
+    "id": 407
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out_1)s>",
+        "object": "<%(e_out_1)s>",
+        "subject": "?uri"
+      },
+      {
+        "predicate": "<%(e_to_e_out_2)s>",
+        "object": "<%(e_out_2)s>",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 2,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE {?uri <%(e_to_e_out_1)s> <%(e_out_1)s> . ?uri <%(e_to_e_out_2)s> <%(e_out_2)s> } ",
+    "placeholders": ["<%(e_out_1)s>", "<%(e_out_2)s>"],
+    "type": "count",
+    "id": 108
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out_1)s>",
+        "object": "<%(e_out_1)s>",
+        "subject": "?uri"
+      },
+      {
+        "predicate": "<%(e_to_e_out_2)s>",
+        "object": "<%(e_out_2)s>",
+        "subject": "?uri"
+      }
+    ],
+    "n_entities": 2,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE {?uri <%(e_to_e_out_1)s> <%(e_out_1)s> . ?uri <%(e_to_e_out_2)s> <%(e_out_2)s> } . ?uri rdf:type class",
+    "placeholders": ["<%(e_out_1)s>", "<%(e_out_2)s>"],
+    "type": "count",
+    "id": 408
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e_in_out)s>",
+        "object": "<%(e_in_out)s>",
+        "subject": "?x"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { ?x <%(e_in_to_e_in_out)s> <%(e_in_out)s> . ?x <%(e_in_to_e)s> ?uri }",
+    "placeholders": "<%(e_in_out)s>",
+    "type": "count",
+    "id": 111
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e_in_out)s>",
+        "object": "<%(e_in_out)s>",
+        "subject": "?x"
+      },
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "?uri",
+        "subject": "?x"
+      },
+      {
+        "predicate": "rdf:type",
+        "object": "class",
+        "subject": "?x"
+      }
+    ],
+    "n_entities": 1,
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { ?x <%(e_in_to_e_in_out)s> <%(e_in_out)s> . ?x <%(e_in_to_e)s> ?uri . ?x rdf:type class}",
+    "placeholders": "<%(e_in_out)s>",
+    "type": "count",
+    "id": 411
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out)s>",
+        "subject": "<%(uri)s>"
+      }
+    ],
+    "n_entities": 1,
+    "template": "ASK WHERE { <%(uri)s> <%(e_to_e_out)s> <%(e_out)s> }",
+    "placeholders": ["<%(e_out)s>"],
+    "type": "ask",
+    "id": 151
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_to_e_out)s>",
+        "object": "<%(e_out)s>",
+        "subject": "<%(uri)s>"
+      }
+    ],
+    "n_entities": 1,
+    "template": "ASK WHERE { <%(uri)s> <%(e_to_e_out)s> <%(e_out)s> }",
+    "placeholders": ["<%(e_out)s>"],
+    "type": "ask",
+    "id": 451
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "<%(uri)s>",
+        "subject": "<%(e_in)s>"
+      }
+    ],
+    "n_entities": 1,
+    "template": "ASK WHERE { <%(e_in)s> <%(e_in_to_e)s> <%(uri)s> }",
+    "placeholders": ["<%(e_in)s>"],
+    "type": "ask",
+    "id": 152
+  },
+  {
+    "triples": [
+      {
+        "predicate": "<%(e_in_to_e)s>",
+        "object": "<%(uri)s>",
+        "subject": "<%(e_in)s>"
+      }
+    ],
+    "n_entities": 1,
+    "template": "ASK WHERE { <%(e_in)s> <%(e_in_to_e)s> <%(uri)s> }",
+    "placeholders": ["<%(e_in)s>"],
+    "type": "ask",
+    "id": 452
+  }
+]
