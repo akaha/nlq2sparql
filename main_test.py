@@ -71,7 +71,7 @@ def testReadJSON():
     for attribute in attributes:
         assert hasattr(result[0], attribute) == True
 
-def testFindSparqlTemplates():
+def testFindSparqlTemplate():
     templates = json.loads(open('templates.json').read())
     quad = main.LCQuad({
         "verbalized_question": "Who are the <comics characters> whose <painter> is <Bill Finger>?",
@@ -83,7 +83,7 @@ def testFindSparqlTemplates():
     result = main.findTemplate(templates, quad)
 
     assert len(result) >= 1
-    assert result[0]['id'] == 301
+    assert result['id'] == 301
 
 
 
