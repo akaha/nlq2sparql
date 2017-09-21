@@ -1,6 +1,7 @@
 import main
 import json
 
+
 def testExtractEntities():
     quad = main.LCQuad({
         "verbalized_question": "Who are the <comics characters> whose <painter> is <Bill Finger>?",
@@ -23,7 +24,7 @@ def testExtractEntities():
         ],
         "n_entities": 1,
         "template": " SELECT DISTINCT ?uri WHERE {?uri <%(e_to_e_out)s> <%(e_out)s> . ?uri rdf:type class } ",
-        "placeholders": "<%(e_out)s>",
+        "placeholders": ["<%(e_out)s>"],
         "type": "vanilla",
         "id": 301
     }
@@ -86,4 +87,37 @@ def testFindSparqlTemplate():
     assert result['id'] == 301
 
 
+def testExtractNLTemplateQuestion():
+    question = 'Who are the <comics characters> whose <painter> is <Bill Finger>?'
+    entities = [main.Entity('<http://dbpedia.org/resource/Bill_Finger>', 'A')]
+    templateQuestion = 'Who are the comics characters whose painter is <A>?'
 
+    result = main.extractNLTemplateQuestion(question, entities)
+
+    assert result == templateQuestion
+
+
+def testExtractSparqlTemplateQuery():
+    query = 'SELECT DISTINCT ?uri WHERE { ?uri <http://dbpedia.org/ontology/creator> <http://dbpedia.org/resource/Bill_Finger> . ?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/ComicsCharacter>}'
+    entities = [main.Entity('<http://dbpedia.org/resource/Bill_Finger>', 'A')]
+    templateQuery = 'select distinct ?x where { ?x <http://dbpedia.org/ontology/creator> <A> . ?x a <http://dbpedia.org/ontology/comicscharacter>}'
+
+    result = main.extractSparqlTemplateQuery(query, entities)
+
+    assert result == templateQuery
+
+
+def testMostSimilarPlaceholder():
+    words = ['comics characters', 'painter', 'Bill Finger']
+    entity = '<http://dbpedia.org/resource/Bill_Finger>'
+
+    result = main.mostSimilarPlaceholder(words, entity)
+
+    assert result == words[2]
+
+
+def testShorten():
+    query = '?toolong or not ?toolong is the ?question'
+    shortened = '?x or not ?x is the ?y'
+    result = main.shortenVariableNames(query)
+    assert result == shortened

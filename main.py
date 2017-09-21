@@ -1,5 +1,9 @@
 import argparse
 import json
+from Levenshtein import distance
+import operator
+import re
+import string
 from utils import extractTriples
 
 
@@ -13,6 +17,75 @@ class LCQuad:
         self.sparqlTemplate = None
         self.sparqlQuery = jsonQuad['sparql_query']
         self.sparqlQueryTriples = None
+
+
+class Entity:
+    def __init__(self, uri, letter):
+        self.uri = uri
+        self.letter = letter
+
+
+def toNSpMRow (lcQuad):
+    concatLists = lambda prevList, list : prevList + list
+    entityList = set(reduce(concatLists, extractEntities(lcQuad), []))
+    entities = map(lambda (uri, letter) : Entity(uri, letter), zip(entityList, string.ascii_uppercase))
+    nlQuestion = extractNLTemplateQuestion(getattr(lcQuad, 'verbalizedQuestion'), entities)  # TODO: use correctedQuestion instead of verbalized question
+    sparqlQuery = extractSparqlTemplateQuery(getattr(lcQuad, 'sparqlQuery'), entities)
+    sparqlGeneratorQuery = extractGeneratorQuery(sparqlQuery, lcQuad)
+    row = [nlQuestion, sparqlQuery, sparqlGeneratorQuery]
+    return row
+
+
+def extractNLTemplateQuestion (question, entities):
+    wordsInBrackets = set(extractWordsInBrackets(question))
+    placeholders = map(lambda entity : mostSimilarPlaceholder(wordsInBrackets, getattr(entity, 'uri')), entities) #TODO: with label instead of uri
+    for bracketWord in wordsInBrackets:
+        if bracketWord in placeholders:
+            upperLetter = getattr(entities[placeholders.index(bracketWord)], 'letter')
+            question = string.replace(question, bracketWord, upperLetter)
+        else:
+            withBrackets = '<' + bracketWord + '>'
+            withoutBrackets = bracketWord
+            question = string.replace(question, withBrackets, withoutBrackets)
+
+    return question
+
+
+def extractSparqlTemplateQuery (query, entities):
+
+    def replaceEntityWithLetter (query, entity):
+        entityString = re.compile(getattr(entity, 'uri'), re.IGNORECASE)
+        replacement = entityString.sub('<' + getattr(entity, 'letter') + '>', query)
+        return replacement
+
+    replaceEntitiesWithLetters = lambda query : reduce(replaceEntityWithLetter, entities, query)
+    replaceRdfTypeProperty = lambda query : string.replace(query, '<https://www.w3.org/1999/02/22-rdf-syntax-ns#type>', 'a')
+    templateQuery= shortenVariableNames(replaceRdfTypeProperty(replaceEntitiesWithLetters(string.lower(query))))
+    return templateQuery
+
+
+def extractGeneratorQuery (query, quad):
+    # TODO
+    return ''
+
+
+def shortenVariableNames (query):
+    variablePattern = r'\s+?(\?\w+)'
+    variables = set(re.findall(variablePattern, query))
+    replacement = reduce(lambda query, (variable, letter) : string.replace(query, variable, '?' + letter), zip(variables, ['x', 'y', 'z', 'u', 'v', 'w', 'm', 'n']), query)
+    return replacement
+
+
+def mostSimilarPlaceholder (words, label):
+    wordsWithLevenshteinDistance = map(lambda word : tuple([word, distance(word, label)]), words)
+    mostSimilarWord = min(wordsWithLevenshteinDistance, key=operator.itemgetter(1))[0]
+    return mostSimilarWord
+
+
+def extractWordsInBrackets (question):
+    bracketPattern = r'\<(.*?)\>'
+    wordsInBrackets = re.findall(bracketPattern, question)
+    return wordsInBrackets
 
 
 def extractEntities (quad):
