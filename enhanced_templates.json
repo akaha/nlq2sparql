@@ -55,7 +55,7 @@
       }
     ],
     "n_entities": 1,
-    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in)s> <%(e_in_to_e)s> ?uri } . ?uri rdf:type class ",
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in)s> <%(e_in_to_e)s> ?uri . ?uri rdf:type class }",
     "placeholders": ["<%(e_in)s>"],
     "type": "vanilla",
     "id": 302
@@ -141,7 +141,7 @@
       }
     ],
     "n_entities": 1,
-    "template": " SELECT DISTINCT ?uri WHERE { ?x <%(e_in_to_e_in_out)s> <%(e_in_out)s> . ?x <%(e_in_to_e)s> ?uri . ?uri rdf:type class} ",
+    "template": " SELECT DISTINCT ?uri WHERE { ?x <%(e_in_to_e_in_out)s> <%(e_in_out)s> . ?x <%(e_in_to_e)s> ?uri . ?uri rdf:type class } ",
     "placeholders": ["<%(e_in_out)s>"],
     "type": "vanilla",
     "id": 305
@@ -179,7 +179,7 @@
       }
     ],
     "n_entities": 1,
-    "template": "SELECT DISTINCT ?uri WHERE { ?x <%(e_out_to_e_out_out)s> <%(e_out_out)s> . ?uri <%(e_to_e_out)s> ?x } . ?uri rdf:type class",
+    "template": "SELECT DISTINCT ?uri WHERE { ?x <%(e_out_to_e_out_out)s> <%(e_out_out)s> . ?uri <%(e_to_e_out)s> ?x  . ?uri rdf:type class }",
     "placeholders": ["<%(e_out_out)s>"],
     "type": "vanilla",
     "id": 306
@@ -384,7 +384,7 @@
       }
     ],
     "n_entities": 2,
-    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in_1)s> <%(e_in_to_e)s> ?uri. <%(e_in_2)s> <%(e_in_to_e)s> ?uri} . ?uri rdf:type class",
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in_1)s> <%(e_in_to_e)s> ?uri. <%(e_in_2)s> <%(e_in_to_e)s> ?uri . ?uri rdf:type class }",
     "placeholders": ["<%(e_in_1)s>", "<%(e_in_2)s>"],
     "type": "vanilla",
     "id": 315
@@ -422,7 +422,7 @@
       }
     ],
     "n_entities": 2,
-    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in_1)s> <%(e_in_to_e_1)s> ?uri. <%(e_in_2)s> <%(e_in_to_e_2)s> ?uri} . ?uri rdf:type class",
+    "template": " SELECT DISTINCT ?uri WHERE { <%(e_in_1)s> <%(e_in_to_e_1)s> ?uri. <%(e_in_2)s> <%(e_in_to_e_2)s> ?uri . ?uri rdf:type class }",
     "placeholders": ["<%(e_in_1)s>", "<%(e_in_2)s>"],
     "type": "vanilla",
     "id": 316
@@ -483,7 +483,7 @@
       }
     ],
     "n_entities": 1,
-    "template": " SELECT DISTINCT COUNT(?uri) WHERE { <%(e_in)s> <%(e_in_to_e)s> ?uri } . ?uri rdf:type class",
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { <%(e_in)s> <%(e_in_to_e)s> ?uri  . ?uri rdf:type class }",
     "placeholders": ["<%(e_in)s>"],
     "type": "count",
     "id": 402
@@ -564,7 +564,7 @@
       }
     ],
     "n_entities": 1,
-    "template": " SELECT DISTINCT COUNT(?uri) WHERE { ?x <%(e_in_to_e_in_out)s> <%(e_in_out)s> . ?x <%(e_in_to_e)s> ?uri } . ?uri rdf:type class",
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { ?x <%(e_in_to_e_in_out)s> <%(e_in_out)s> . ?x <%(e_in_to_e)s> ?uri  . ?uri rdf:type class }",
     "placeholders": ["<%(e_in_out)s>"],
     "type": "count",
     "id": 405
@@ -645,7 +645,7 @@
       }
     ],
     "n_entities": 2,
-    "template": " SELECT DISTINCT COUNT(?uri) WHERE { ?uri <%(e_to_e_out)s> <%(e_out_1)s> . ?uri <%(e_to_e_out)s> <%(e_out_2)s>} . ?uri rdf:type class ",
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE { ?uri <%(e_to_e_out)s> <%(e_out_1)s> . ?uri <%(e_to_e_out)s> <%(e_out_2)s> . ?uri rdf:type class } ",
     "placeholders": ["<%(e_out_1)s>", "<%(e_out_2)s>"],
     "type": "count",
     "id": 407
@@ -683,7 +683,7 @@
       }
     ],
     "n_entities": 2,
-    "template": " SELECT DISTINCT COUNT(?uri) WHERE {?uri <%(e_to_e_out_1)s> <%(e_out_1)s> . ?uri <%(e_to_e_out_2)s> <%(e_out_2)s> } . ?uri rdf:type class",
+    "template": " SELECT DISTINCT COUNT(?uri) WHERE {?uri <%(e_to_e_out_1)s> <%(e_out_1)s> . ?uri <%(e_to_e_out_2)s> <%(e_out_2)s> . ?uri rdf:type class }",
     "placeholders": ["<%(e_out_1)s>", "<%(e_out_2)s>"],
     "type": "count",
     "id": 408

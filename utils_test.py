@@ -42,9 +42,7 @@ def testSplitIntoTriples():
         'predicate': '<https://www.w3.org/1999/02/22-rdf-syntax-ns#type>',
         'object': '<http://dbpedia.org/ontology/ComicsCharacter>'
     }
-    firstStatement = ' '.join([firstTriple['subject'], firstTriple['predicate'], firstTriple['object']])
-    secondStatement = ' '.join([secondTriple['subject'], secondTriple['predicate'], secondTriple['object']])
-    whereStatement = ' '.join([firstStatement, '.', secondStatement])
+    whereStatement = '?uri <http://dbpedia.org/ontology/creator> <http://dbpedia.org/resource/Bill_Finger>  . ?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/ComicsCharacter>'
     result = utils.splitIntoTriples(whereStatement)
 
     assert len(result) == 2
@@ -64,3 +62,10 @@ def testSplitIntoTripleParts():
     assert result['object'] == object
 
 
+def testExtractSelect():
+    query = 'SELECT DISTINCT ?uri WHERE {?uri <http://dbpedia.org/ontology/creator> <http://dbpedia.org/resource/Bill_Finger>  . ?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/ComicsCharacter>}'
+    select = 'SELECT DISTINCT ?uri'
+
+    result = utils.extractSelect(query)
+
+    assert result == select

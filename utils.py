@@ -1,9 +1,15 @@
 import json
 import re
 
+def extractSelect (sparqlQuery):
+    selectStatementPattern = r'(.*?)\swhere'
+    selectStatementMatch = re.search(selectStatementPattern, sparqlQuery, re.IGNORECASE)
+    selectStatement = selectStatementMatch.group(1)
+    return selectStatement
+
 
 def extractTriples (sparqlQuery):
-    whereStatementPattern = r'{(.*)}'
+    whereStatementPattern = r'{(.*?)}'
     whereStatementMatch = re.search(whereStatementPattern, sparqlQuery)
     whereStatement = whereStatementMatch.group(1)
     triples = splitIntoTriples(whereStatement)
@@ -11,8 +17,24 @@ def extractTriples (sparqlQuery):
 
 
 def splitIntoTriples (whereStatement):
-    triplePattern = r'(\S+\s+\S+\s+\S+)\s*\.?'
-    tripleStatements = re.findall(triplePattern, whereStatement)
+    tripleAndSeparators = re.split('(\.[\s\?\<$])', whereStatement)
+    trimmed = map(lambda str : str.strip(), tripleAndSeparators)
+
+    def repair (list, element):
+        if element not in ['.', '.?', '.<']:
+            previousElement = list[-1]
+            del list[-1]
+            if previousElement in ['.', '.?', '.<']:
+                cutoff = previousElement[1] if previousElement in ['.?', '.<'] else ''
+                list.append(cutoff + element)
+            else:
+                list.append(previousElement + ' ' + element)
+        else:
+            list.append(element)
+
+        return list
+
+    tripleStatements = reduce(repair, trimmed, [''])
     triples = map(splitIntoTripleParts, tripleStatements)
     return triples
 

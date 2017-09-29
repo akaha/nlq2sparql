@@ -1,6 +1,6 @@
 import main
 import json
-
+import string
 
 def testExtractEntities():
     quad = main.LCQuad({
@@ -98,9 +98,9 @@ def testExtractNLTemplateQuestion():
 
 
 def testExtractSparqlTemplateQuery():
-    query = 'SELECT DISTINCT ?uri WHERE { ?uri <http://dbpedia.org/ontology/creator> <http://dbpedia.org/resource/Bill_Finger> . ?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/ComicsCharacter>}'
+    query = 'SELECT DISTINCT ?uri WHERE {?uri <http://dbpedia.org/ontology/creator> <http://dbpedia.org/resource/Bill_Finger>.?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/ComicsCharacter>}'
     entities = [main.Entity('<http://dbpedia.org/resource/Bill_Finger>', 'A')]
-    templateQuery = 'select distinct ?x where { ?x <http://dbpedia.org/ontology/creator> <A> . ?x a <http://dbpedia.org/ontology/comicscharacter>}'
+    templateQuery = 'SELECT DISTINCT ?x where { ?x <http://dbpedia.org/ontology/creator> <A> . ?x a <http://dbpedia.org/ontology/ComicsCharacter> }'
 
     result = main.extractSparqlTemplateQuery(query, entities)
 
@@ -121,3 +121,12 @@ def testShorten():
     shortened = '?x or not ?x is the ?y'
     result = main.shortenVariableNames(query)
     assert result == shortened
+
+
+def testQueryObjectToString():
+    originalQuery = 'SELECT DISTINCT ?uri WHERE { ?uri <http://dbpedia.org/ontology/creator> <http://dbpedia.org/resource/Bill_Finger> . ?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/ComicsCharacter> }'
+    obj = main.SparqlQuery(originalQuery)
+
+    result = str(obj)
+
+    assert string.lower(result) == string.lower(originalQuery)

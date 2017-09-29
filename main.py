@@ -4,7 +4,7 @@ from Levenshtein import distance
 import operator
 import re
 import string
-from utils import extractTriples
+from utils import extractTriples, extractSelect
 
 
 class LCQuad:
@@ -23,6 +23,17 @@ class Entity:
     def __init__(self, uri, letter):
         self.uri = uri
         self.letter = letter
+        self.variable = string.lower(letter)
+
+
+class SparqlQuery:
+    def __init__(self, query):
+        self.query = query
+        self.select = extractSelect(query)
+        self.whereTriples = extractTriples(query)
+    def __str__(self):
+        tripleToString = lambda triple : ' '.join(map(lambda key : triple[key], ['subject', 'predicate', 'object']))
+        return self.select + ' where { ' + ' . '.join(map(tripleToString, self.whereTriples)) + ' }'
 
 
 def toNSpMRow (lcQuad):
@@ -52,27 +63,35 @@ def extractNLTemplateQuestion (question, entities):
 
 
 def extractSparqlTemplateQuery (query, entities):
-
-    def replaceEntityWithLetter (query, entity):
+    def replaceEntityWithLetter (sparqlQuery, entity):
         entityString = re.compile(getattr(entity, 'uri'), re.IGNORECASE)
-        replacement = entityString.sub('<' + getattr(entity, 'letter') + '>', query)
-        return replacement
+        triples = getattr(sparqlQuery, 'whereTriples')
+        letter = '<' + getattr(entity, 'letter') + '>'
+        for triple in triples:
+            triple['subject'] = entityString.sub(letter, triple['subject'])
+            triple['object'] = entityString.sub(letter, triple['object'])
+        setattr(sparqlQuery, 'select', entityString.sub(letter, getattr(sparqlQuery, 'select')))
+        return sparqlQuery
 
-    replaceEntitiesWithLetters = lambda query : reduce(replaceEntityWithLetter, entities, query)
-    replaceRdfTypeProperty = lambda query : string.replace(query, '<https://www.w3.org/1999/02/22-rdf-syntax-ns#type>', 'a')
-    templateQuery= shortenVariableNames(replaceRdfTypeProperty(replaceEntitiesWithLetters(string.lower(query))))
-    return templateQuery
+    def replaceRdfTypeProperty (sparqlQuery):
+        triples = getattr(sparqlQuery, 'whereTriples')
+        for triple in triples:
+            triple['predicate'] = string.replace(triple['predicate'], '<https://www.w3.org/1999/02/22-rdf-syntax-ns#type>', 'a')
+        return sparqlQuery
 
+    replaceEntitiesWithLetters = lambda sparqlQuery : reduce(replaceEntityWithLetter, entities, sparqlQuery)
+    templateQuery = replaceRdfTypeProperty(replaceEntitiesWithLetters(SparqlQuery(query)))
+    return shortenVariableNames(str(templateQuery))
 
 def extractGeneratorQuery (query, quad):
     # TODO
     return ''
 
 
-def shortenVariableNames (query):
+def shortenVariableNames (queryString):
     variablePattern = r'\s+?(\?\w+)'
-    variables = set(re.findall(variablePattern, query))
-    replacement = reduce(lambda query, (variable, letter) : string.replace(query, variable, '?' + letter), zip(variables, ['x', 'y', 'z', 'u', 'v', 'w', 'm', 'n']), query)
+    variables = set(re.findall(variablePattern, queryString))
+    replacement = reduce(lambda query, (variable, letter) : string.replace(query, variable, '?' + letter), zip(variables, ['x', 'y', 'z', 'u', 'v', 'w', 'm', 'n']), queryString)
     return replacement
 
 
