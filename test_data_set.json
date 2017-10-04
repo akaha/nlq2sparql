@@ -1,1 +1,58 @@
-[{"verbalized_question": "Who are the <comics characters> whose <painter> is <Bill Finger>?", "_id": "f0a9f1ca14764095ae089b152e0e7f12", "sparql_template_id": 301, "sparql_query": "SELECT DISTINCT ?uri WHERE {?uri <http://dbpedia.org/ontology/creator> <http://dbpedia.org/resource/Bill_Finger>  . ?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/ComicsCharacter>}", "corrected_question": "Which comic characters are painted by Bill Finger?"}, {"verbalized_question": "Is <Selwyn Lloyd> the <prime minister> of <Winston Churchill>?", "_id": "30b709079ea5421cb33c227c3feb9019", "sparql_template_id": 152, "sparql_query": "ASK WHERE { <http://dbpedia.org/resource/Selwyn_Lloyd> <http://dbpedia.org/ontology/primeMinister> <http://dbpedia.org/resource/Winston_Churchill> }", "corrected_question": "Was winston churchill the prime minister of Selwyn Lloyd?"}, {"verbalized_question": "What is the <leader> of the <government agency> which is the <parent organisation> of <Gestapo> ?", "_id": "dad51bf9d0294cac99d176aba17c0241", "sparql_template_id": 3, "sparql_query": "SELECT DISTINCT ?uri WHERE { <http://dbpedia.org/resource/Gestapo> <http://dbpedia.org/ontology/parentOrganisation> ?x . ?x <http://dbpedia.org/ontology/leader> ?uri  . }", "corrected_question": "Name some leaders of the parent organisation of the Gestapo?"},  {"verbalized_question": "What is the <television show> whose <relateds> are <The Sarah Jane Adventures> and <Doctor Who Confidential>?", "_id": "6ff03a568e2e4105b491ab1c1411c1ab", "sparql_template_id": 7, "sparql_query": "SELECT DISTINCT ?uri WHERE { ?uri <http://dbpedia.org/ontology/related> <http://dbpedia.org/resource/The_Sarah_Jane_Adventures> . ?uri <http://dbpedia.org/ontology/related> <http://dbpedia.org/resource/Doctor_Who_Confidential> . }", "corrected_question": "What tv series can be said to be related to the sarah jane adventure and dr who confidential?"}, {"verbalized_question": "What is the <territory> of the <military conflict> which is the <participant in conflict> of <2nd Foreign Infantry Regiment> ?", "_id": "380224a93b1e441994c4b9785881aa6c", "sparql_template_id": 303, "sparql_query": "SELECT DISTINCT ?uri WHERE { <http://dbpedia.org/resource/2nd_Foreign_Infantry_Regiment> <http://dbpedia.org/ontology/battle> ?x . ?x <http://dbpedia.org/ontology/territory> ?uri  . ?x <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/MilitaryConflict>}", "corrected_question": "Where was the battle fought where 2nd Foreign Infantry Regiment participated  ?"}]
+[
+  {
+    "verbalized_question": "Who are the <comics characters> whose <painter> is <Bill Finger>?",
+    "_id": "f0a9f1ca14764095ae089b152e0e7f12",
+    "sparql_template_id": 301,
+    "sparql_query": "SELECT DISTINCT ?uri WHERE {?uri <http://dbpedia.org/ontology/creator> <http://dbpedia.org/resource/Bill_Finger>  . ?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/ComicsCharacter>}",
+    "corrected_question": "Which comic characters are painted by Bill Finger?"
+  },
+  {
+    "verbalized_question": "Is <Selwyn Lloyd> the <prime minister> of <Winston Churchill>?",
+    "_id": "30b709079ea5421cb33c227c3feb9019",
+    "sparql_template_id": 152,
+    "sparql_query": "ASK WHERE { <http://dbpedia.org/resource/Selwyn_Lloyd> <http://dbpedia.org/ontology/primeMinister> <http://dbpedia.org/resource/Winston_Churchill> }",
+    "corrected_question": "Was winston churchill the prime minister of Selwyn Lloyd?"
+  },
+  {
+    "verbalized_question": "What is the <leader> of the <government agency> which is the <parent organisation> of <Gestapo> ?",
+    "_id": "dad51bf9d0294cac99d176aba17c0241",
+    "sparql_template_id": 3,
+    "sparql_query": "SELECT DISTINCT ?uri WHERE { <http://dbpedia.org/resource/Gestapo> <http://dbpedia.org/ontology/parentOrganisation> ?x . ?x <http://dbpedia.org/ontology/leader> ?uri  . }",
+    "corrected_question": "Name some leaders of the parent organisation of the Gestapo?"
+  },
+  {
+    "verbalized_question": "What is the <television show> whose <relateds> are <The Sarah Jane Adventures> and <Doctor Who Confidential>?",
+    "_id": "6ff03a568e2e4105b491ab1c1411c1ab",
+    "sparql_template_id": 7,
+    "sparql_query": "SELECT DISTINCT ?uri WHERE { ?uri <http://dbpedia.org/ontology/related> <http://dbpedia.org/resource/The_Sarah_Jane_Adventures> . ?uri <http://dbpedia.org/ontology/related> <http://dbpedia.org/resource/Doctor_Who_Confidential> . }",
+    "corrected_question": "What tv series can be said to be related to the sarah jane adventure and dr who confidential?"
+  },
+  {
+    "verbalized_question": "What is the <territory> of the <military conflict> which is the <participant in conflict> of <2nd Foreign Infantry Regiment> ?",
+    "_id": "380224a93b1e441994c4b9785881aa6c",
+    "sparql_template_id": 303,
+    "sparql_query": "SELECT DISTINCT ?uri WHERE { <http://dbpedia.org/resource/2nd_Foreign_Infantry_Regiment> <http://dbpedia.org/ontology/battle> ?x . ?x <http://dbpedia.org/ontology/territory> ?uri  . ?x <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/MilitaryConflict>}",
+    "corrected_question": "Where was the battle fought where 2nd Foreign Infantry Regiment participated  ?"
+  },
+  {
+    "verbalized_question": "Give me a count of <television shows> whose <company> is <HBO>?",
+    "_id": "1b604c16430a441ebbae9e095b36661e",
+    "sparql_template_id": 401,
+    "sparql_query": "SELECT DISTINCT COUNT(?uri) WHERE {?uri <http://dbpedia.org/ontology/company> <http://dbpedia.org/resource/HBO>  . ?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/TelevisionShow>}",
+    "corrected_question": "How many shows does HBO have?"
+  },
+  {
+    "verbalized_question": "Give me a count of <royalties> whose <buried in> is <Rome>?",
+    "_id": "a33350d8ce8d449a9ce52f0ca2451234",
+    "sparql_template_id": 401,
+    "sparql_query": "SELECT DISTINCT COUNT(?uri) WHERE {?uri <http://dbpedia.org/property/placeOfBurial> <http://dbpedia.org/resource/Rome>  . ?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Royalty>}",
+    "corrected_question": "Give me a count of royalties buried in Rome ?"
+  },
+  {
+    "verbalized_question": "Is <Gibson Les Paul> the <notable instruments> of <Duane Allman>?",
+    "_id": "4eba9f2aaa744ba699fd23239145e64b",
+    "sparql_template_id": 151,
+    "sparql_query": "ASK WHERE { <http://dbpedia.org/resource/Duane_Allman> <http://dbpedia.org/property/notableInstruments> <http://dbpedia.org/resource/Gibson_Les_Paul> }",
+    "corrected_question": "Was Duanne Allman known to play the Les Paul?"
+  }
+]

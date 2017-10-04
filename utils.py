@@ -35,7 +35,8 @@ def splitIntoTriples (whereStatement):
         return list
 
     tripleStatements = reduce(repair, trimmed, [''])
-    triples = map(splitIntoTripleParts, tripleStatements)
+    triplesWithNones = map(splitIntoTripleParts, tripleStatements)
+    triples = filter(lambda triple : triple != None, triplesWithNones)
     return triples
 
 
@@ -43,11 +44,14 @@ def splitIntoTripleParts (triple):
     statementPattern = r'(\S+)\s+(\S+)\s+(\S+)'
     statementPatternMatch = re.search(statementPattern, triple)
 
-    return {
-        'subject': statementPatternMatch.group(1),
-        'predicate': statementPatternMatch.group(2),
-        'object': statementPatternMatch.group(3)
-    }
+    if statementPatternMatch:
+        return {
+            'subject': statementPatternMatch.group(1),
+            'predicate': statementPatternMatch.group(2),
+            'object': statementPatternMatch.group(3)
+        }
+    else:
+        return None
 
 
 def enhanceTemplateInformation ():

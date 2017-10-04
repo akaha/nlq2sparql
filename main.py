@@ -1,4 +1,5 @@
 import argparse
+import copy
 import json
 from Levenshtein import distance
 import operator
@@ -23,17 +24,17 @@ class Entity:
     def __init__(self, uri, letter):
         self.uri = uri
         self.letter = letter
-        self.variable = string.lower(letter)
+        self.variable = '?' + string.lower(letter)
 
 
 class SparqlQuery:
     def __init__(self, query):
         self.query = query
-        self.select = extractSelect(query)
-        self.whereTriples = extractTriples(query)
+        self.selectClause = extractSelect(query)
+        self.whereClauseTriples = extractTriples(query)
     def __str__(self):
         tripleToString = lambda triple : ' '.join(map(lambda key : triple[key], ['subject', 'predicate', 'object']))
-        return self.select + ' where { ' + ' . '.join(map(tripleToString, self.whereTriples)) + ' }'
+        return self.selectClause + ' where { ' + ' . '.join(map(tripleToString, self.whereClauseTriples)) + ' }'
 
 
 def toNSpMRow (lcQuad):
@@ -42,7 +43,7 @@ def toNSpMRow (lcQuad):
     entities = map(lambda (uri, letter) : Entity(uri, letter), zip(entityList, string.ascii_uppercase))
     nlQuestion = extractNLTemplateQuestion(getattr(lcQuad, 'verbalizedQuestion'), entities)  # TODO: use correctedQuestion instead of verbalized question
     sparqlQuery = extractSparqlTemplateQuery(getattr(lcQuad, 'sparqlQuery'), entities)
-    sparqlGeneratorQuery = extractGeneratorQuery(sparqlQuery, lcQuad)
+    sparqlGeneratorQuery = extractGeneratorQuery(sparqlQuery, entities)
     row = [nlQuestion, sparqlQuery, sparqlGeneratorQuery]
     return row
 
@@ -65,27 +66,43 @@ def extractNLTemplateQuestion (question, entities):
 def extractSparqlTemplateQuery (query, entities):
     def replaceEntityWithLetter (sparqlQuery, entity):
         entityString = re.compile(getattr(entity, 'uri'), re.IGNORECASE)
-        triples = getattr(sparqlQuery, 'whereTriples')
+        triples = getattr(sparqlQuery, 'whereClauseTriples')
         letter = '<' + getattr(entity, 'letter') + '>'
         for triple in triples:
             triple['subject'] = entityString.sub(letter, triple['subject'])
             triple['object'] = entityString.sub(letter, triple['object'])
-        setattr(sparqlQuery, 'select', entityString.sub(letter, getattr(sparqlQuery, 'select')))
+        setattr(sparqlQuery, 'selectClause', entityString.sub(letter, getattr(sparqlQuery, 'selectClause')))
         return sparqlQuery
 
     def replaceRdfTypeProperty (sparqlQuery):
-        triples = getattr(sparqlQuery, 'whereTriples')
+        triples = getattr(sparqlQuery, 'whereClauseTriples')
         for triple in triples:
             triple['predicate'] = string.replace(triple['predicate'], '<https://www.w3.org/1999/02/22-rdf-syntax-ns#type>', 'a')
         return sparqlQuery
 
     replaceEntitiesWithLetters = lambda sparqlQuery : reduce(replaceEntityWithLetter, entities, sparqlQuery)
     templateQuery = replaceRdfTypeProperty(replaceEntitiesWithLetters(SparqlQuery(query)))
-    return shortenVariableNames(str(templateQuery))
+    return templateQuery
 
-def extractGeneratorQuery (query, quad):
-    # TODO
-    return ''
+
+def extractGeneratorQuery (sparqlQuery, entities):
+    def replaceLetterWithVariable (triple, entity):
+        for key in ['subject', 'object']:
+            if triple[key] == '<' + getattr(entity, 'letter') + '>':
+                triple[key] = getattr(entity, 'variable')
+        return triple
+
+    query = copy.deepcopy(sparqlQuery)
+    triples = getattr(query, 'whereClauseTriples')
+    for triple in triples:
+        for entity in entities:
+            triple = replaceLetterWithVariable(triple, entity)
+
+    variables = map(lambda entity : getattr(entity, 'variable'), entities)
+    generatorSelectClause = 'select distinct ' + ', '.join(variables)
+    setattr(query, 'selectClause', generatorSelectClause)
+
+    return query
 
 
 def shortenVariableNames (queryString):
@@ -119,9 +136,9 @@ def extractEntities (quad):
             positions = placeholderPositions[index]
             tripleEntities = map(lambda position : triple[position], positions)
             entities.append(tripleEntities)
-        # TODO: why are there sparql queries with more triples than their templates?
-        # else:
-        #     print getattr(quad, 'id'), getattr(quad, 'sparqlTemplateID')
+        else:
+            # in case of misformed templates
+            print getattr(quad, 'id'), getattr(quad, 'sparqlTemplateID')
     return entities
 
 def getPlaceholderPositions (template, possiblePlaceholderPositions=None):
@@ -162,5 +179,11 @@ if __name__ == '__main__':
     rawQuads = readQuads(quadFile)
     quads = setSparqlTemplates(rawQuads, templateFile)
     quadsWithTemplates = filter(lambda quad: getattr(quad, 'sparqlTemplate') != None, quads)
-    extractedEntities = map(extractEntities, quadsWithTemplates)
-    print extractedEntities
+    # extractedEntities = map(extractEntities, quadsWithTemplates)
+    # print extractedEntities
+    for quad in quadsWithTemplates:
+        row = toNSpMRow(quad)
+        nlQuestion = row[0]
+        sparqlQuery = str(row[1])
+        generatorQuery = str(row[2])
+        print "%s\t%s\t%s" % (nlQuestion, sparqlQuery, generatorQuery)

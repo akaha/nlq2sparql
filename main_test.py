@@ -2,6 +2,47 @@ import main
 import json
 import string
 
+
+def testToNSpMRow():
+    quad = main.LCQuad({
+        "verbalized_question": "Give me a count of <royalties> whose <buried in> is <Rome>?",
+        "_id": "a33350d8ce8d449a9ce52f0ca2451234",
+        "sparql_template_id": 401,
+        "sparql_query": "SELECT DISTINCT COUNT(?uri) WHERE {?uri <http://dbpedia.org/property/placeOfBurial> <http://dbpedia.org/resource/Rome>  . ?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Royalty>}",
+        "corrected_question": "Give me a count of royalties buried in Rome ?"
+    })
+    template = {
+        "triples": [
+          {
+            "predicate": "<%(e_to_e_out)s>",
+            "object": "<%(e_out)s>",
+            "subject": "?uri"
+          },
+          {
+            "predicate": "rdf:type",
+            "object": "class",
+            "subject": "?uri"
+          }
+        ],
+        "n_entities": 1,
+        "template": " SELECT DISTINCT COUNT(?uri) WHERE {?uri <%(e_to_e_out)s> <%(e_out)s> . ?uri rdf:type class} ",
+        "placeholders": ["<%(e_out)s>"],
+        "type": "count",
+        "id": 401
+      }
+    setattr(quad, 'sparqlTemplate', template)
+
+    placeholderQuestion = 'Give me a count of royalties whose buried in is <A>?'
+    sparqlQuery = 'SELECT DISTINCT COUNT(?uri) WHERE { ?uri <http://dbpedia.org/property/placeOfBurial> <A> . ?uri a <http://dbpedia.org/ontology/Royalty> }'
+    generatorQuery = 'select distinct ?a where { ?uri <http://dbpedia.org/property/placeOfBurial> ?a . ?uri a <http://dbpedia.org/ontology/Royalty> }'
+
+    row = main.toNSpMRow(quad)
+
+    assert row[0] == placeholderQuestion
+    assert string.lower(str(row[1])) == string.lower(sparqlQuery)
+    assert string.lower(str(row[2])) == string.lower(generatorQuery)
+
+
 def testExtractEntities():
     quad = main.LCQuad({
         "verbalized_question": "Who are the <comics characters> whose <painter> is <Bill Finger>?",
@@ -72,6 +113,7 @@ def testReadJSON():
     for attribute in attributes:
         assert hasattr(result[0], attribute) == True
 
+
 def testFindSparqlTemplate():
     templates = json.loads(open('templates.json').read())
     quad = main.LCQuad({
@@ -100,11 +142,22 @@ def testExtractNLTemplateQuestion():
 def testExtractSparqlTemplateQuery():
     query = 'SELECT DISTINCT ?uri WHERE {?uri <http://dbpedia.org/ontology/creator> <http://dbpedia.org/resource/Bill_Finger>.?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/ComicsCharacter>}'
     entities = [main.Entity('<http://dbpedia.org/resource/Bill_Finger>', 'A')]
-    templateQuery = 'SELECT DISTINCT ?x where { ?x <http://dbpedia.org/ontology/creator> <A> . ?x a <http://dbpedia.org/ontology/ComicsCharacter> }'
+    templateQuery = 'SELECT DISTINCT ?uri where { ?uri <http://dbpedia.org/ontology/creator> <A> . ?uri a <http://dbpedia.org/ontology/ComicsCharacter> }'
 
-    result = main.extractSparqlTemplateQuery(query, entities)
+    result = str(main.extractSparqlTemplateQuery(query, entities))
 
     assert result == templateQuery
+
+
+def testExtractGeneratorQuery():
+    entities = [main.Entity('<http://dbpedia.org/resource/Bill_Finger>', 'A'), main.Entity('foo', 'B')]
+    templateQuery = 'SELECT DISTINCT ?uri where { ?uri <http://dbpedia.org/ontology/creator> <A> . ?uri a <B> }'
+    sparqlQuery = main.SparqlQuery(templateQuery)
+    generatorQuery = 'select distinct ?a, ?b where { ?uri <http://dbpedia.org/ontology/creator> ?a . ?uri a ?b }'
+
+    result = str(main.extractGeneratorQuery(sparqlQuery, entities))
+
+    assert result == generatorQuery
 
 
 def testMostSimilarPlaceholder():
