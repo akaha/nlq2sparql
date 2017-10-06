@@ -54,5 +54,19 @@
     "sparql_template_id": 151,
     "sparql_query": "ASK WHERE { <http://dbpedia.org/resource/Duane_Allman> <http://dbpedia.org/property/notableInstruments> <http://dbpedia.org/resource/Gibson_Les_Paul> }",
     "corrected_question": "Was Duanne Allman known to play the Les Paul?"
+  },
+  {
+    "verbalized_question": "What is the total number of <software> whose <programming language> is <C++> and <operating system> is <Microsoft Windows>?",
+    "_id": "526b1249debc4893af724c324a24726e",
+    "sparql_template_id": 108,
+    "sparql_query": " SELECT DISTINCT COUNT(?uri) WHERE {?uri <http://dbpedia.org/property/programmingLanguage> <http://dbpedia.org/resource/C++> . ?uri <http://dbpedia.org/ontology/operatingSystem> <http://dbpedia.org/resource/Microsoft_Windows> } ",
+    "corrected_question": "Count the total number of software whose programming language is C++ and operating system is Microsoft Windows?"
+  },
+  {
+    "verbalized_question": "What is the <river> of <Cohoes, New York> ?",
+    "_id": "7306c480b5f0480e85dea19fd979e9c2",
+    "sparql_template_id": 2,
+    "sparql_query": "SELECT DISTINCT ?uri WHERE { <http://dbpedia.org/resource/Cohoes,_New_York> <http://dbpedia.org/ontology/river> ?uri }",
+    "corrected_question": "Which river goes through cohoes, NY"
   }
 ]

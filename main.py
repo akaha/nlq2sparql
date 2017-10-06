@@ -5,6 +5,8 @@ from Levenshtein import distance
 import operator
 import re
 import string
+
+from dbpedia import DBPedia
 from utils import extractTriples, extractSelect
 
 
@@ -21,11 +23,15 @@ class LCQuad:
 
 
 class Entity:
-    def __init__(self, uri, letter):
+    def __init__(self, uri, letter, dbpedia=None):
         self.uri = uri
         self.letter = letter
         self.variable = '?' + string.lower(letter)
-
+        if dbpedia != None:
+            label = dbpedia.getLabel(uri)
+            self.label = label if label != None else uri
+        else:
+            self.label = uri
 
 class SparqlQuery:
     def __init__(self, query):
@@ -37,10 +43,10 @@ class SparqlQuery:
         return self.selectClause + ' where { ' + ' . '.join(map(tripleToString, self.whereClauseTriples)) + ' }'
 
 
-def toNSpMRow (lcQuad):
+def toNSpMRow (lcQuad, dbpedia=None):
     concatLists = lambda prevList, list : prevList + list
     entityList = set(reduce(concatLists, extractEntities(lcQuad), []))
-    entities = map(lambda (uri, letter) : Entity(uri, letter), zip(entityList, string.ascii_uppercase))
+    entities = map(lambda (uri, letter) : Entity(uri, letter, dbpedia), zip(entityList, string.ascii_uppercase))
     nlQuestion = extractNLTemplateQuestion(getattr(lcQuad, 'verbalizedQuestion'), entities)  # TODO: use correctedQuestion instead of verbalized question
     sparqlQuery = extractSparqlTemplateQuery(getattr(lcQuad, 'sparqlQuery'), entities)
     sparqlGeneratorQuery = extractGeneratorQuery(sparqlQuery, entities)
@@ -50,7 +56,7 @@ def toNSpMRow (lcQuad):
 
 def extractNLTemplateQuestion (question, entities):
     wordsInBrackets = set(extractWordsInBrackets(question))
-    placeholders = map(lambda entity : mostSimilarPlaceholder(wordsInBrackets, getattr(entity, 'uri')), entities) #TODO: with label instead of uri
+    placeholders = map(lambda entity : mostSimilarPlaceholder(wordsInBrackets, getattr(entity, 'label')), entities)
     for bracketWord in wordsInBrackets:
         if bracketWord in placeholders:
             upperLetter = getattr(entities[placeholders.index(bracketWord)], 'letter')
@@ -65,7 +71,7 @@ def extractNLTemplateQuestion (question, entities):
 
 def extractSparqlTemplateQuery (query, entities):
     def replaceEntityWithLetter (sparqlQuery, entity):
-        entityString = re.compile(getattr(entity, 'uri'), re.IGNORECASE)
+        entityString = re.compile(re.escape(getattr(entity, 'uri')), re.IGNORECASE)
         triples = getattr(sparqlQuery, 'whereClauseTriples')
         letter = '<' + getattr(entity, 'letter') + '>'
         for triple in triples:
@@ -181,8 +187,9 @@ if __name__ == '__main__':
     quadsWithTemplates = filter(lambda quad: getattr(quad, 'sparqlTemplate') != None, quads)
     # extractedEntities = map(extractEntities, quadsWithTemplates)
     # print extractedEntities
+    dbpedia = DBPedia()
     for quad in quadsWithTemplates:
-        row = toNSpMRow(quad)
+        row = toNSpMRow(quad, dbpedia)
         nlQuestion = row[0]
         sparqlQuery = str(row[1])
         generatorQuery = str(row[2])
