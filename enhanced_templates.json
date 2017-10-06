@@ -764,9 +764,9 @@
         "subject": "<%(uri)s>"
       }
     ],
-    "n_entities": 1,
+    "n_entities": 2,
     "template": "ASK WHERE { <%(uri)s> <%(e_to_e_out)s> <%(e_out)s> }",
-    "placeholders": ["<%(e_out)s>"],
+    "placeholders": ["<%(uri)s>", "<%(e_out)s>"],
     "type": "ask",
     "id": 151
   },
@@ -778,9 +778,9 @@
         "subject": "<%(uri)s>"
       }
     ],
-    "n_entities": 1,
+    "n_entities": 2,
     "template": "ASK WHERE { <%(uri)s> <%(e_to_e_out)s> <%(e_out)s> }",
-    "placeholders": ["<%(e_out)s>"],
+    "placeholders": ["<%(uri)s>", "<%(e_out)s>"],
     "type": "ask",
     "id": 451
   },
@@ -792,9 +792,9 @@
         "subject": "<%(e_in)s>"
       }
     ],
-    "n_entities": 1,
+    "n_entities": 2,
     "template": "ASK WHERE { <%(e_in)s> <%(e_in_to_e)s> <%(uri)s> }",
-    "placeholders": ["<%(e_in)s>"],
+    "placeholders": ["<%(e_in)s>", "<%(uri)s>"],
     "type": "ask",
     "id": 152
   },
@@ -806,9 +806,9 @@
         "subject": "<%(e_in)s>"
       }
     ],
-    "n_entities": 1,
+    "n_entities": 2,
     "template": "ASK WHERE { <%(e_in)s> <%(e_in_to_e)s> <%(uri)s> }",
-    "placeholders": ["<%(e_in)s>"],
+    "placeholders": ["<%(e_in)s>", "<%(uri)s>"],
     "type": "ask",
     "id": 452
   }
