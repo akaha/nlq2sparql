@@ -55,9 +55,20 @@ def toNSpMRow (lcQuad, dbpedia=None):
 
 
 def extractNLTemplateQuestion (question, entities):
+    def compareStrings(x, y ):
+        x_isSubstringOf_y = y.find(x) > -1
+        y_isSubstringOf_x = x.find(y) > -1
+        if x_isSubstringOf_y:
+            return 1
+        if y_isSubstringOf_x:
+            return -1
+        return 0
+
     wordsInBrackets = set(extractWordsInBrackets(question))
-    placeholders = map(lambda entity : mostSimilarPlaceholder(wordsInBrackets, getattr(entity, 'label')), entities)
-    for bracketWord in wordsInBrackets:
+    sortedWordsInBrackets = sorted(wordsInBrackets, cmp=compareStrings)
+    placeholders = map(lambda entity : mostSimilarPlaceholder(sortedWordsInBrackets, getattr(entity, 'label')), entities)
+
+    for bracketWord in sortedWordsInBrackets:
         if bracketWord in placeholders:
             upperLetter = getattr(entities[placeholders.index(bracketWord)], 'letter')
             question = string.replace(question, bracketWord, upperLetter)
@@ -193,4 +204,5 @@ if __name__ == '__main__':
         nlQuestion = row[0]
         sparqlQuery = str(row[1])
         generatorQuery = str(row[2])
-        print "%s\t%s\t%s" % (nlQuestion, sparqlQuery, generatorQuery)
+        id = getattr(quad, 'id')
+        print "%s\t%s\t%s\t%s" % (nlQuestion, sparqlQuery, generatorQuery, id)

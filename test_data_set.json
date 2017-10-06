@@ -68,5 +68,12 @@
     "sparql_template_id": 2,
     "sparql_query": "SELECT DISTINCT ?uri WHERE { <http://dbpedia.org/resource/Cohoes,_New_York> <http://dbpedia.org/ontology/river> ?uri }",
     "corrected_question": "Which river goes through cohoes, NY"
+  },
+  {
+    "verbalized_question": "Is <Angola Avante> the <anthem> of <Angola>?",
+    "_id": "96b3c05711324ad7b27f67b505eb0ef3",
+    "sparql_template_id": 151,
+    "sparql_query": "ASK WHERE { <http://dbpedia.org/resource/Angola> <http://dbpedia.org/ontology/anthem> <http://dbpedia.org/resource/Angola_Avante> }",
+    "corrected_question": "Is Angola Avante the anthem of Angola?"
   }
 ]
