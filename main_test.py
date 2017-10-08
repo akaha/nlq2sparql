@@ -130,11 +130,16 @@ def testFindSparqlTemplate():
 
 
 def testExtractNLTemplateQuestion():
-    question = 'Who are the <comics characters> whose <painter> is <Bill Finger>?'
+    quad = main.LCQuad({
+        "verbalized_question": "Who are the <comics characters> whose <painter> is <Bill Finger>?",
+        "_id": "f0a9f1ca14764095ae089b152e0e7f12",
+        "sparql_template_id": 301,
+        "sparql_query": "SELECT DISTINCT ?uri WHERE {?uri <http://dbpedia.org/ontology/creator> <http://dbpedia.org/resource/Bill_Finger>  . ?uri <https://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/ComicsCharacter>}",
+        "corrected_question": "Which comic characters are painted by Bill Finger?"})
     entities = [main.Entity('<http://dbpedia.org/resource/Bill_Finger>', 'A')]
     templateQuestion = 'Who are the comics characters whose painter is <A>?'
 
-    result = main.extractNLTemplateQuestion(question, entities)
+    result = main.extractNLTemplateQuestionFromVerbalizedQuestion(quad, entities)
 
     assert result == templateQuestion
 
@@ -183,3 +188,21 @@ def testQueryObjectToString():
     result = str(obj)
 
     assert string.lower(result) == string.lower(originalQuery)
+
+
+def testBuildSubsequences ():
+    sequence = ['Where', 'are', 'you', 'from']
+    maxSequenceLength = 3
+    subsequences = set()
+    wordlist = [
+        ['Where', 'are', 'you'], ['are', 'you', 'from'],
+        ['Where', 'are'], ['are', 'you'], ['you', 'from'],
+        ['Where'], ['are'], ['you'], ['from']
+    ]
+    for words in wordlist:
+        subsequences.add(tuple(words))
+
+    result = main.buildSubsequences(sequence, maxSequenceLength)
+
+    assert len(result.symmetric_difference(subsequences)) == 0
+
