@@ -396,6 +396,11 @@
         "predicate": "<%(e_in_to_e)s>",
         "object": "?uri",
         "subject": "<%(e_in_2)s>"
+      },
+       {
+        "predicate": "rdf:type",
+        "object": "class",
+        "subject": "?uri"
       }
     ],
     "n_entities": 2,
@@ -434,6 +439,11 @@
         "predicate": "<%(e_in_to_e_2)s>",
         "object": "?uri",
         "subject": "<%(e_in_2)s>"
+      },
+       {
+        "predicate": "rdf:type",
+        "object": "class",
+        "subject": "?uri"
       }
     ],
     "n_entities": 2,
@@ -495,6 +505,11 @@
         "predicate": "<%(e_in_to_e)s>",
         "object": "?uri",
         "subject": "<%(e_in)s>"
+      },
+       {
+        "predicate": "rdf:type",
+        "object": "class",
+        "subject": "?uri"
       }
     ],
     "n_entities": 1,

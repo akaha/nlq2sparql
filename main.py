@@ -107,8 +107,8 @@ def fuzzySearch (label, question):
     mostSimilarSequence = min(subsequencesWithLevenshteinDistance, key=operator.itemgetter(1))
     mostSimilarDistance = mostSimilarSequence[1]
     sequence = mostSimilarSequence[0]
-    distanceForAcronym = len(label) - len(wordsInLabel)
-    if (mostSimilarDistance < distanceForAcronym):
+    distanceForAcronym = len(label) - 1
+    if (mostSimilarDistance <= distanceForAcronym):
         sequencePattern = '\W+'.join(map(re.escape, sequence))
         sequenceInQuestionMatch = re.search(sequencePattern, question)
         if (not sequenceInQuestionMatch):
