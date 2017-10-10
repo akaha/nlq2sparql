@@ -1,6 +1,7 @@
 import argparse
 import copy
 import json
+import math
 from Levenshtein import distance
 import logging
 import operator
@@ -30,11 +31,12 @@ class Entity:
         self.uri = uri
         self.placeholder = '<' + letter + '>'
         self.variable = '?' + string.lower(letter)
+        uriName = nameFromUri(uri)
         if dbpedia != None:
-            label = dbpedia.getLabel(uri)
-            self.label = label if label != None else uri
+            names = dbpedia.getNames(uri)
+            self.names = names if len(names) > 0 else [uriName]
         else:
-            self.label = uri
+            self.names = [uriName]
 
 class SparqlQuery:
     def __init__(self, query):
@@ -61,23 +63,26 @@ def toNSpMRow (lcQuad, dbpedia=None):
 
 def extractNLTemplateQuestionFromCorrectedQuestion (lcQuad, entities):
     question = getattr(lcQuad, 'correctedQuestion')
-    compareEntities = lambda entity1, entity2 : compareStrings(getattr(entity1, 'label'), getattr(entity2, 'label'))
+    compare = lambda name, names : reduce(lambda prev, nameItem : compareStrings(name, nameItem) if prev == 0 else prev, names, 0)
+    compareNames = lambda names1, names2 : reduce(lambda prev, name : compare(name, names2) if prev == 0 else prev, names1, 0)
+    compareEntities = lambda entity1, entity2 : compareNames(getattr(entity1, 'names'), getattr(entity2, 'names'))
 
     sortedEntities = sorted(entities, cmp=compareEntities)
 
     for entity in sortedEntities:
-        label = getattr(entity, 'label')
+        names = getattr(entity, 'names')
+        escapedNames = map(re.escape, names)
         placeholder = getattr(entity, 'placeholder')
-        matchInQuestion = re.search(re.escape(label) + r's?', question, flags=re.IGNORECASE)
+        matchInQuestion = re.search(r'(' + '|'.join(escapedNames) + r')s?', question, flags=re.IGNORECASE)
         if (matchInQuestion):
             question = string.replace(question, matchInQuestion.group(0), placeholder)
         else:
-            logging.debug('Fuzzy search necessary for: "' + label + '" in: ' + question + ', ' + str(getattr(lcQuad, 'id')))
-            fuzzySearchMatch = fuzzySearch(label, question)
+            logging.debug('Fuzzy search necessary for: "' + ' | '.join(names) + '" in: ' + question + ', ' + str(getattr(lcQuad, 'id')))
+            fuzzySearchMatch = fuzzySearch(names, question)
             if (fuzzySearchMatch):
                 question = string.replace(question, fuzzySearchMatch.group(0), placeholder)
             else:
-                logging.debug('Fuzzy entity detection failed for: "' + label + '" in: ' + question + ', ' + str(getattr(lcQuad, 'id')))
+                logging.debug('Fuzzy entity detection failed for: "' + ' | '.join(names) + '" in: ' + question + ', ' + str(getattr(lcQuad, 'id')))
                 return None
 
     return question
@@ -87,7 +92,7 @@ def extractNLTemplateQuestionFromVerbalizedQuestion (lcQuad, entities):
     question = getattr(lcQuad, 'verbalizedQuestion')
     wordsInBrackets = set(extractWordsInBrackets(question))
     sortedWordsInBrackets = sorted(wordsInBrackets, cmp=compareStrings)
-    placeholders = map(lambda entity : mostSimilarPlaceholder(sortedWordsInBrackets, getattr(entity, 'label')), entities)
+    placeholders = map(lambda entity : mostSimilarPlaceholder(sortedWordsInBrackets, getattr(entity, 'names')), entities)
 
     for bracketWord in sortedWordsInBrackets:
         withBrackets = '<' + bracketWord + '>'
@@ -98,25 +103,27 @@ def extractNLTemplateQuestionFromVerbalizedQuestion (lcQuad, entities):
     return question
 
 
-def fuzzySearch (label, question):
-    wordsInLabel = re.split(r'\W+', label)
+def fuzzySearch (names, question ):
+    wordsInNames = map(lambda name : re.split(r'\W+', name), names)
     wordsInQuestion = re.split(r'\W+', question)
-    maxSequenceLength = len(wordsInLabel)
+    maxSequenceLength = max(map(len, wordsInNames))
     subsequences = buildSubsequences(wordsInQuestion, maxSequenceLength)
-    subsequencesWithLevenshteinDistance = map(lambda sequence: tuple([sequence, distance(' '.join(sequence), label)]), subsequences)
-    mostSimilarSequence = min(subsequencesWithLevenshteinDistance, key=operator.itemgetter(1))
-    mostSimilarDistance = mostSimilarSequence[1]
-    sequence = mostSimilarSequence[0]
-    distanceForAcronym = len(label) - 1
-    if (mostSimilarDistance <= distanceForAcronym):
-        sequencePattern = '\W+'.join(map(re.escape, sequence))
+    minDistance = lambda string, stringList : min(map(lambda stringItem : [distance(string, stringItem), stringItem], stringList), key=operator.itemgetter(0))
+    subsequencesWithLevenshteinDistance = map(lambda sequence: [sequence] + minDistance(' '.join(sequence), names), subsequences)
+    mostSimilar = min(subsequencesWithLevenshteinDistance, key=operator.itemgetter(1))
+    mostSimilarSequence = mostSimilar[0]
+    mostSimilarDistance = mostSimilar[1]
+    mostSimilarName = mostSimilar[2]
+    tolerance = math.ceil(len(mostSimilarName) / 2)
+    if (mostSimilarDistance <= tolerance):
+        sequencePattern = '\W+'.join(map(re.escape, mostSimilarSequence))
         sequenceInQuestionMatch = re.search(sequencePattern, question)
         if (not sequenceInQuestionMatch):
             logging.debug('Failed to retransform: ' + str(sequencePattern))
 
         return sequenceInQuestionMatch
     else:
-        logging.debug(str(mostSimilarDistance) + ' as distance value seems too high: ' + ' '.join(sequence) + ' == ' + label + ' ?')
+        logging.debug(str(mostSimilarDistance) + ' as distance value seems too high: ' + ' '.join(mostSimilarSequence) + ' == ' + mostSimilarName + ' ?')
         return None
 
 
@@ -189,8 +196,17 @@ def shortenVariableNames (queryString):
     return replacement
 
 
-def mostSimilarPlaceholder (words, label):
-    wordsWithLevenshteinDistance = map(lambda word : tuple([word, distance(word, label)]), words)
+def nameFromUri (uri):
+    stripPrefix = lambda s : s.replace('<http://dbpedia.org/resource/', '')
+    stripEndTag = lambda s : s.replace('>', '')
+    removeBrackets = lambda s : re.sub(r'\(.*?\)', '', s)
+    replaceUnderscores = lambda s : s.replace('_', ' ')
+    return string.strip(replaceUnderscores(removeBrackets(stripEndTag(stripPrefix(uri)))))
+
+
+def mostSimilarPlaceholder (words, names):
+    minDistance = lambda word, names : min(map(lambda name : distance(word, name), names))
+    wordsWithLevenshteinDistance = map(lambda word : tuple([word, minDistance(word, names)]), words)
     mostSimilarWord = min(wordsWithLevenshteinDistance, key=operator.itemgetter(1))[0]
     return mostSimilarWord
 
@@ -259,10 +275,14 @@ if __name__ == '__main__':
     # extractedEntities = map(extractEntities, quadsWithTemplates)
     # print extractedEntities
     dbpedia = DBPedia()
-    for quad in quadsWithTemplates:
-        row = toNSpMRow(quad, dbpedia)
-        nlQuestion = row[0]
-        sparqlQuery = str(row[1])
-        generatorQuery = str(row[2])
-        id = getattr(quad, 'id')
-        print "%s\t%s\t%s\t%s" % (nlQuestion, sparqlQuery, generatorQuery, id)
+    try:
+        for quad in quadsWithTemplates:
+            row = toNSpMRow(quad, dbpedia)
+            nlQuestion = row[0]
+            sparqlQuery = str(row[1])
+            generatorQuery = str(row[2])
+            id = getattr(quad, 'id')
+            print "%s\t%s\t%s\t%s" % (nlQuestion, sparqlQuery, generatorQuery, id)
+
+    finally:
+        dbpedia.saveCache()

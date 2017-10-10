@@ -32,7 +32,7 @@ def testToNSpMRow():
       }
     setattr(quad, 'sparqlTemplate', template)
 
-    placeholderQuestion = 'Give me a count of royalties whose buried in is <A>?'
+    placeholderQuestion = 'Give me a count of royalties buried in <A> ?'
     sparqlQuery = 'SELECT DISTINCT COUNT(?uri) WHERE { ?uri <http://dbpedia.org/property/placeOfBurial> <A> . ?uri a <http://dbpedia.org/ontology/Royalty> }'
     generatorQuery = 'select distinct ?a where { ?uri <http://dbpedia.org/property/placeOfBurial> ?a . ?uri a <http://dbpedia.org/ontology/Royalty> }'
 
@@ -41,6 +41,18 @@ def testToNSpMRow():
     assert row[0] == placeholderQuestion
     assert string.lower(str(row[1])) == string.lower(sparqlQuery)
     assert string.lower(str(row[2])) == string.lower(generatorQuery)
+
+
+def testFuzzySearch():
+    names = ['Gibson Les Paul', 'Les Paul']
+    question = 'Was Duanne Allman known to play the Les Paul?'
+    otherQuestion = 'Here is nothing about guitars'
+
+    resultMatch = main.fuzzySearch(names, question)
+    otherMatch = main.fuzzySearch(names, otherQuestion)
+
+    assert resultMatch
+    assert not otherMatch
 
 
 def testExtractEntities():
@@ -167,9 +179,9 @@ def testExtractGeneratorQuery():
 
 def testMostSimilarPlaceholder():
     words = ['comics characters', 'painter', 'Bill Finger']
-    entity = '<http://dbpedia.org/resource/Bill_Finger>'
+    entityNames = ['<http://dbpedia.org/resource/Bill_Finger>', 'Bill The Finger']
 
-    result = main.mostSimilarPlaceholder(words, entity)
+    result = main.mostSimilarPlaceholder(words, entityNames)
 
     assert result == words[2]
 
@@ -206,3 +218,11 @@ def testBuildSubsequences ():
 
     assert len(result.symmetric_difference(subsequences)) == 0
 
+
+def testNameFromUri ():
+    uri = '<http://dbpedia.org/resource/Joseph_Dion_(author)>'
+    name = 'Joseph Dion'
+
+    result = main.nameFromUri(uri)
+
+    assert result == name
