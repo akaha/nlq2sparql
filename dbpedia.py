@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 from SPARQLWrapper import SPARQLWrapper, JSON
 import string
@@ -18,7 +19,7 @@ class DBPedia:
 
     def getNames (self, resource):
         cachedNames = self.checkCache(resource)
-        if cachedNames:
+        if cachedNames != None:
             return cachedNames
         names = self.query(resource)
         self.cache[resource] = names
@@ -39,6 +40,7 @@ class DBPedia:
         sparql = SPARQLWrapper("http://dbpedia.org/sparql")
         sparql.setQuery(GET_LABEL_AND_NAME_OF_RESOURCE % {'target_resource': resource})
         sparql.setReturnFormat(JSON)
+        logging.debug('DBPedia query for: ' + resource)
         results = sparql.query().convert()
         if len(results["results"]["bindings"]) > 0:
             firstResult = results["results"]["bindings"][0]
