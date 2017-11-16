@@ -189,6 +189,40 @@ def extractGeneratorQuery (sparqlQuery, entities):
     return query
 
 
+def extractGeneratorQueryOnlyFromTemplateQuery (sparqlQuery):
+    def extractPlaceholderPlaceholders(query):
+        placeholders = []
+        variable_pattern_a = r'<A>'
+        variable_pattern_b = r'<B>'
+        variable_pattern_c = r'<C>'
+        variable_match_a = re.search(variable_pattern_a, query, re.IGNORECASE)
+        variable_match_b = re.search(variable_pattern_b, query, re.IGNORECASE)
+        variable_match_c = re.search(variable_pattern_c, query, re.IGNORECASE)
+        if variable_match_a:
+            placeholders.append('<A>')
+        if variable_match_b:
+            placeholders.append('<B>')
+        if variable_match_c:
+            placeholders.append('<C>')
+        return placeholders
+
+    placeholders = extractPlaceholderPlaceholders(sparqlQuery)
+    whereStatementPattern = r'{(.*?)}'
+    whereStatementMatch = re.search(whereStatementPattern, sparqlQuery)
+    whereStatement = whereStatementMatch.group(1)
+
+    if whereStatement:
+        variables = []
+        for placeholder in placeholders:
+            variable = '?' + str.lower(placeholder[1])
+            variables.append(variable)
+            whereStatement = whereStatement.replace(placeholder, variable)
+        generatorSelectClause = 'select distinct ' + ', '.join(variables)
+        return '{} where {{ {} }}'.format(generatorSelectClause, whereStatement)
+    else:
+        return ''
+
+
 def shortenVariableNames (queryString):
     variablePattern = r'\s+?(\?\w+)'
     variables = set(re.findall(variablePattern, queryString))
