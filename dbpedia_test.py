@@ -5,7 +5,7 @@ from dbpedia import DBPedia
 def testCaching():
     tempFile ='test_cache.json'
     dbpedia = DBPedia(tempFile)
-    dbpedia.query = lambda x : ['askedDBPedia']
+    dbpedia.queryNames = lambda x : ['askedDBPedia']
     dbpedia.cache = dict({
         "<http://dbpedia.org/resource/Gibson_Les_Paul>": ["Gibson Les Paul", "Les Paul"]
     })
